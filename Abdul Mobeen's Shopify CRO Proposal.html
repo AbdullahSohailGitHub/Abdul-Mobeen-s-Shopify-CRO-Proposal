@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopify CRO Proposal — Abdul Mobeen</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: transparent;
+    --navy-mid: rgba(8,13,28,0.6);
+    --navy-card: rgba(12,18,36,0.8);
+    --cobalt: #4F8EF7;
+    --cobalt-dim: rgba(79,142,247,0.12);
+    --gold: #F5C842;
+    --gold-dim: rgba(245,200,66,0.12);
+    --white: #F0F4FF;
+    --muted: #6B7A99;
+    --border: rgba(79,142,247,0.22);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #05080F;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── GLOBAL BACKGROUND CANVAS ── */
+  #global-bg {
+    position: fixed; inset: 0; z-index: -1;
+    pointer-events: none;
+  }
+
+  /* ── AURORA BLOBS ── */
+  .aurora-wrap {
+    position: fixed; inset: 0; z-index: -1;
+    pointer-events: none; overflow: hidden;
+  }
+  .aurora {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: 0.13;
+    animation: aurora-drift 18s ease-in-out infinite alternate;
+  }
+  .aurora-1 {
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, #4F8EF7 0%, transparent 70%);
+    top: -10%; left: -15%;
+    animation-duration: 20s;
+  }
+  .aurora-2 {
+    width: 600px; height: 600px;
+    background: radial-gradient(ellipse, #7C3AED 0%, transparent 70%);
+    top: 20%; right: -20%;
+    animation-duration: 25s; animation-delay: -8s;
+  }
+  .aurora-3 {
+    width: 500px; height: 400px;
+    background: radial-gradient(ellipse, #F5C842 0%, transparent 70%);
+    bottom: 10%; left: 20%;
+    opacity: 0.07;
+    animation-duration: 22s; animation-delay: -14s;
+  }
+  .aurora-4 {
+    width: 400px; height: 400px;
+    background: radial-gradient(ellipse, #06B6D4 0%, transparent 70%);
+    bottom: -10%; right: 10%;
+    opacity: 0.09;
+    animation-duration: 17s; animation-delay: -5s;
+  }
+  @keyframes aurora-drift {
+    0%   { transform: translate(0,0) scale(1); }
+    33%  { transform: translate(40px,-30px) scale(1.08); }
+    66%  { transform: translate(-30px,40px) scale(0.95); }
+    100% { transform: translate(20px,20px) scale(1.04); }
+  }
+
+  /* ── GRID OVERLAY ── */
+  .grid-overlay {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(79,142,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(5,8,18,0.75);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(79,142,247,0.15);
+    transition: padding 0.3s;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    color: var(--white);
+  }
+  .nav-logo span { color: var(--cobalt); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--cobalt); color: #fff;
+    border: none; padding: 9px 22px;
+    border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 120px 24px 80px;
+    overflow: hidden;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(79,142,247,0.1) 0%, transparent 70%);
+  }
+  #canvas-bg {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--cobalt-dim);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--cobalt);
+    margin-bottom: 28px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-tag::before {
+    content: ''; width: 7px; height: 7px;
+    background: var(--cobalt); border-radius: 50%;
+    animation: pulse-dot 1.5s infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.4); }
+  }
+  .hero-greeting {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 600; color: var(--gold);
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.6s 0.35s forwards;
+  }
+  .hero-h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    font-weight: 800; line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-h1 .line-gold { color: var(--gold); }
+  .hero-h1 .line-cobalt { color: var(--cobalt); }
+  .hero-sub {
+    max-width: 620px;
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
+    color: var(--muted); line-height: 1.7;
+    margin: 0 auto 40px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.7s 0.7s forwards;
+  }
+  .hero-ctas {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.7s 0.9s forwards;
+  }
+  .btn-primary {
+    background: var(--cobalt); color: #fff;
+    padding: 14px 32px; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 0 0 rgba(79,142,247,0.4);
+    animation: cta-glow 2.5s 1.5s infinite;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,142,247,0.35); }
+  @keyframes cta-glow {
+    0%,100% { box-shadow: 0 0 0 0 rgba(79,142,247,0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(79,142,247,0); }
+  }
+  .btn-ghost {
+    background: transparent; color: var(--white);
+    padding: 14px 32px; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem;
+    text-decoration: none; border: 1px solid var(--border);
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--cobalt); background: var(--cobalt-dim); }
+
+  /* ── SCROLL ARROW ── */
+  .scroll-hint {
+    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    z-index: 1; opacity: 0; animation: fadeUp 0.6s 1.3s forwards;
+  }
+  .scroll-hint span { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .scroll-arrow {
+    width: 22px; height: 22px;
+    border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg);
+    animation: bounce-down 1.5s infinite;
+  }
+  @keyframes bounce-down {
+    0%,100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(5px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── STATS STRIP ── */
+  .stats-strip {
+    background: rgba(15,22,45,0.7);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 24px;
+    position: relative;
+  }
+  .stats-strip::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(79,142,247,0.06) 0%, transparent 50%, rgba(245,200,66,0.04) 100%);
+    pointer-events: none;
+  }
+  .stats-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; justify-content: space-around; flex-wrap: wrap; gap: 24px;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem; font-weight: 800;
+    color: var(--cobalt); line-height: 1;
+  }
+  .stat-num .gold { color: var(--gold); }
+  .stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 6px; letter-spacing: 0.04em; }
+
+  /* ── SECTIONS ── */
+  section { padding: 96px 24px; }
+  .section-inner { max-width: 960px; margin: 0 auto; }
+  .eyebrow {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--cobalt);
+    margin-bottom: 14px;
+  }
+  .section-h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800; line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .section-lead {
+    font-size: 1.05rem; color: var(--muted);
+    max-width: 580px; line-height: 1.75;
+    margin-bottom: 56px;
+  }
+
+  /* ── PROBLEM SECTION ── */
+  #problem {
+    background: rgba(8,13,28,0.55);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(79,142,247,0.1);
+    border-bottom: 1px solid rgba(79,142,247,0.1);
+  }
+  .problem-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .problem-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .problem-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
+  .problem-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--cobalt-dim) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .problem-card:hover::before { opacity: 1; }
+  .problem-icon {
+    font-size: 1.6rem; margin-bottom: 14px; display: block;
+  }
+  .problem-card h3 {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 1.05rem; margin-bottom: 8px;
+  }
+  .problem-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+  /* ── APPROACH ── */
+  #approach { background: var(--navy); }
+  .approach-steps { display: flex; flex-direction: column; gap: 0; }
+  .approach-step {
+    display: grid; grid-template-columns: 72px 1fr;
+    gap: 0 28px; align-items: stretch;
+    padding: 0;
+  }
+  .step-left {
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .step-num {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--cobalt-dim); border: 2px solid var(--cobalt);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 0.9rem; color: var(--cobalt);
+    flex-shrink: 0;
+  }
+  .step-line {
+    width: 2px; flex: 1; min-height: 32px;
+    background: linear-gradient(to bottom, var(--cobalt), transparent);
+    margin: 6px 0;
+  }
+  .approach-step:last-child .step-line { display: none; }
+  .step-body {
+    padding: 0 0 44px 0;
+  }
+  .step-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 8px; margin-top: 12px;
+  }
+  .step-body h3 {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 1.15rem; margin-bottom: 8px;
+  }
+  .step-body p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── PORTFOLIO ── */
+  #portfolio {
+    background: rgba(6,10,22,0.6);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(79,142,247,0.1);
+    border-bottom: 1px solid rgba(79,142,247,0.1);
+  }
+  .portfolio-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .portfolio-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .portfolio-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(79,142,247,0.18);
+    border-color: var(--cobalt);
+  }
+  .card-thumb {
+    height: 160px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #0d1b3e, #1a2a52);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-thumb-url {
+    font-family: 'Syne', sans-serif; font-size: 0.9rem;
+    color: rgba(255,255,255,0.35); letter-spacing: 0.04em;
+  }
+  .card-thumb-icon {
+    position: absolute; font-size: 3rem; opacity: 0.08;
+  }
+  .card-thumb-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .card-body { padding: 20px 22px 22px; }
+  .card-body h3 {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 1rem; margin-bottom: 4px;
+  }
+  .card-url {
+    font-size: 0.78rem; color: var(--cobalt);
+    margin-bottom: 10px; display: block;
+  }
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 100px;
+    background: var(--cobalt-dim); color: var(--cobalt);
+    border: 1px solid rgba(79,142,247,0.25);
+    font-weight: 500;
+  }
+  .tag.gold-tag {
+    background: var(--gold-dim); color: var(--gold);
+    border-color: rgba(245,200,66,0.25);
+  }
+
+  /* ── FIGMA CTA ── */
+  .figma-cta {
+    margin-top: 32px;
+    background: var(--navy-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 28px;
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+    text-decoration: none; color: inherit;
+    transition: border-color 0.3s;
+  }
+  .figma-cta:hover { border-color: var(--cobalt); }
+  .figma-icon {
+    width: 44px; height: 44px; border-radius: 8px;
+    background: linear-gradient(135deg, #F24E1E, #FF7262);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .figma-text h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; }
+  .figma-text p { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+  .figma-arrow { margin-left: auto; color: var(--cobalt); font-size: 1.2rem; }
+
+  /* ── CLOSING ── */
+  #closing {
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(79,142,247,0.09) 0%, transparent 70%);
+    text-align: center; padding: 112px 24px;
+  }
+  .closing-inner { max-width: 640px; margin: 0 auto; }
+  .closing-inner .eyebrow { justify-content: center; display: block; }
+  .closing-h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800; line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .closing-h2 span { color: var(--cobalt); }
+  .closing-lead { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-bottom: 40px; }
+  .closing-note {
+    margin-top: 28px; font-size: 0.82rem; color: var(--muted);
+  }
+  .closing-note strong { color: var(--gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy-card);
+    border-top: 1px solid var(--border);
+    padding: 24px; text-align: center;
+    font-size: 0.8rem; color: var(--muted);
+  }
+
+  /* ── REVEAL ANIMATION ── */
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .approach-step { grid-template-columns: 48px 1fr; gap: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AURORA BACKGROUND -->
+<div class="aurora-wrap">
+  <div class="aurora aurora-1"></div>
+  <div class="aurora aurora-2"></div>
+  <div class="aurora aurora-3"></div>
+  <div class="aurora aurora-4"></div>
+</div>
+<div class="grid-overlay"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Abdul <span>Mobeen</span></div>
+  <ul class="nav-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+  </ul>
+  <a href="#closing" class="nav-cta">Reply Today →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="canvas-bg"></canvas>
+  <div class="hero-tag">Proposal for Yianni · Shopify CRO Redesign</div>
+  <div class="hero-greeting">Hey Yianni —</div>
+  <h1 class="hero-h1">
+    Most redesigns fix<br>
+    <span class="line-gold">the look.</span><br>
+    <span class="line-cobalt">This one fixes revenue.</span>
+  </h1>
+  <p class="hero-sub">
+    Weak PDPs, a cart drawer that kills momentum, and mobile UX that buries your product story — that's money left on the table. Here's how I close that gap.
+  </p>
+  <div class="hero-ctas">
+    <a href="#approach" class="btn-primary">See My Approach</a>
+    <a href="#portfolio" class="btn-ghost">View Portfolio</a>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat">
+      <div class="stat-num" data-target="6">0</div>
+      <div class="stat-label">Years Shopify Experience</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" data-target="120">0</div>
+      <div class="stat-label">Stores Built & Optimized</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num gold" data-target="38" data-suffix="%">0%</div>
+      <div class="stat-label">Avg. Conversion Lift</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" data-target="2240" data-prefix="$">$0</div>
+      <div class="stat-label">Project Budget Match</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-inner">
+    <p class="eyebrow reveal">What's killing your conversions</p>
+    <h2 class="section-h2 reveal">Three leaks I'll fix<br>in your store</h2>
+    <p class="section-lead reveal">Your current store probably has these. They're not obvious — but they compound.</p>
+    <div class="problem-grid">
+      <div class="problem-card reveal reveal-delay-1">
+        <span class="problem-icon">📄</span>
+        <h3>Product Pages That Confuse</h3>
+        <p>Visitors don't understand what makes your product worth buying. No clear education hierarchy, buried benefits, and upsells that feel like traps. PDP clarity = checkout confidence.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <span class="problem-icon">🛒</span>
+        <h3>A Cart Drawer That Breaks Flow</h3>
+        <p>The moment someone adds to cart should accelerate the sale — not stall it. Most cart drawers miss upsell, skip AOV nudges, and give users zero reason to keep going.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <span class="problem-icon">📱</span>
+        <h3>Mobile UX That Buries the Story</h3>
+        <p>Over 70% of your traffic is mobile. If your product education, CTA hierarchy, and subscription/refill placement aren't designed mobile-first, you're leaking revenue daily.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section id="approach">
+  <div class="section-inner">
+    <p class="eyebrow reveal">My delivery plan</p>
+    <h2 class="section-h2 reveal">Straightforward.<br>No bloat. Just results.</h2>
+    <p class="section-lead reveal">Here's exactly how I'll build the store around conversion — not just aesthetics.</p>
+    <div class="approach-steps">
+
+      <div class="approach-step reveal">
+        <div class="step-left">
+          <div class="step-num">01</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-label">Homepage</div>
+          <h3>Product Trust Architecture</h3>
+          <p>Social proof, product education, and urgency — sequenced in the exact order that moves cold visitors to warm buyers. Separate desktop and mobile layouts, not just responsive scaling.</p>
+        </div>
+      </div>
+
+      <div class="approach-step reveal">
+        <div class="step-left">
+          <div class="step-num">02</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-label">Product Detail Page</div>
+          <h3>Clarity + Upsell Above the Fold</h3>
+          <p>Refill/subscription placement where users actually make the decision — not buried below reviews. PDP copy hierarchy rebuilt for product education first, friction removal second.</p>
+        </div>
+      </div>
+
+      <div class="approach-step reveal">
+        <div class="step-left">
+          <div class="step-num">03</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-label">Cart Drawer</div>
+          <h3>AOV Logic, Not Just a Summary</h3>
+          <p>Smart add-on logic that feels like a recommendation, not a popup. Progress bars, bundle nudges, and a clear checkout CTA that removes hesitation instead of creating it.</p>
+        </div>
+      </div>
+
+      <div class="approach-step reveal">
+        <div class="step-left">
+          <div class="step-num">04</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-label">Theme & QA</div>
+          <h3>Built on Your Existing Theme</h3>
+          <p>No unnecessary rebuilds — I work within your current Shopify theme, extend it cleanly, and deliver with full mobile QA, cross-browser checks, and launch support baked in.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-inner">
+    <p class="eyebrow reveal">Proof it works</p>
+    <h2 class="section-h2 reveal">Stores I've built<br>& optimized</h2>
+    <p class="section-lead reveal">Real Shopify projects — not mockups. Each one a conversion-focused build with design, development and CRO applied.</p>
+
+    <div class="portfolio-grid">
+
+      <a href="https://half-bakd.com" target="_blank" class="portfolio-card reveal reveal-delay-1">
+        <div class="card-thumb">
+          <span class="card-thumb-icon">🌿</span>
+          <span class="card-thumb-url">half-bakd.com</span>
+          <div class="card-thumb-bar" style="background: linear-gradient(90deg, #4F8EF7, #9B59B6);"></div>
+        </div>
+        <div class="card-body">
+          <h3>Half Bak'd</h3>
+          <a class="card-url">half-bakd.com ↗</a>
+          <div class="card-tags">
+            <span class="tag">Full Redesign</span>
+            <span class="tag gold-tag">CRO</span>
+            <span class="tag">Cart Optimization</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://prima.co" target="_blank" class="portfolio-card reveal reveal-delay-2">
+        <div class="card-thumb">
+          <span class="card-thumb-icon">✨</span>
+          <span class="card-thumb-url">prima.co</span>
+          <div class="card-thumb-bar" style="background: linear-gradient(90deg, #F5C842, #F24E1E);"></div>
+        </div>
+        <div class="card-body">
+          <h3>Prima</h3>
+          <a class="card-url">prima.co ↗</a>
+          <div class="card-tags">
+            <span class="tag">Mobile-First UX</span>
+            <span class="tag gold-tag">Upsells</span>
+            <span class="tag">PDP</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://senbirdtea.com" target="_blank" class="portfolio-card reveal reveal-delay-3">
+        <div class="card-thumb">
+          <span class="card-thumb-icon">🍵</span>
+          <span class="card-thumb-url">senbirdtea.com</span>
+          <div class="card-thumb-bar" style="background: linear-gradient(90deg, #27AE60, #4F8EF7);"></div>
+        </div>
+        <div class="card-body">
+          <h3>Senbird Tea</h3>
+          <a class="card-url">senbirdtea.com ↗</a>
+          <div class="card-tags">
+            <span class="tag">Subscription Flow</span>
+            <span class="tag gold-tag">AOV</span>
+            <span class="tag">Theme Dev</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://atelierrmr.ca" target="_blank" class="portfolio-card reveal reveal-delay-1">
+        <div class="card-thumb">
+          <span class="card-thumb-icon">🏛️</span>
+          <span class="card-thumb-url">atelierrmr.ca</span>
+          <div class="card-thumb-bar" style="background: linear-gradient(90deg, #BDC3C7, #4F8EF7);"></div>
+        </div>
+        <div class="card-body">
+          <h3>Atelier RMR</h3>
+          <a class="card-url">atelierrmr.ca ↗</a>
+          <div class="card-tags">
+            <span class="tag">Brand Identity</span>
+            <span class="tag">Figma → Shopify</span>
+            <span class="tag gold-tag">UX</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://eureka-farms.com" target="_blank" class="portfolio-card reveal reveal-delay-2">
+        <div class="card-thumb">
+          <span class="card-thumb-icon">🌾</span>
+          <span class="card-thumb-url">eureka-farms.com</span>
+          <div class="card-thumb-bar" style="background: linear-gradient(90deg, #E67E22, #27AE60);"></div>
+        </div>
+        <div class="card-body">
+          <h3>Eureka Farms</h3>
+          <a class="card-url">eureka-farms.com ↗</a>
+          <div class="card-tags">
+            <span class="tag">eCommerce UX</span>
+            <span class="tag gold-tag">Conversion</span>
+            <span class="tag">Custom Theme</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://facialcollective.com" target="_blank" class="portfolio-card reveal reveal-delay-3">
+        <div class="card-thumb">
+          <span class="card-thumb-icon">💆</span>
+          <span class="card-thumb-url">facialcollective.com</span>
+          <div class="card-thumb-bar" style="background: linear-gradient(90deg, #E91E8C, #F5C842);"></div>
+        </div>
+        <div class="card-body">
+          <h3>Facial Collective</h3>
+          <a class="card-url">facialcollective.com ↗</a>
+          <div class="card-tags">
+            <span class="tag">Product Education</span>
+            <span class="tag gold-tag">Mobile UX</span>
+            <span class="tag">Shopify Plus</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <a href="https://www.figma.com/design/ljXPYvFxXRogqHJUC3i0dL/Markloops-Portfolios?node-id=0-1&p=f" target="_blank" class="figma-cta reveal">
+      <div class="figma-icon">🎨</div>
+      <div class="figma-text">
+        <h4>Full Design Portfolio on Figma</h4>
+        <p>Markloops Portfolios — full UI/UX process, wireframes & final designs</p>
+      </div>
+      <div class="figma-arrow">→</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section id="closing">
+  <div class="closing-inner">
+    <p class="eyebrow reveal">Ready to move</p>
+    <h2 class="closing-h2 reveal">
+      Reply today.<br>
+      <span>Scoped breakdown</span><br>in 24 hours.
+    </h2>
+    <p class="closing-lead reveal">
+      One question before I send the timeline: Is your subscription/refill model already live on-site — or is placement strategy starting from scratch? That changes the build sequence significantly.
+    </p>
+    <div class="reveal">
+      <a href="mailto:abdulmobeen@example.com" class="btn-primary" style="display:inline-block;">
+        Let's Talk — Abdul Mobeen →
+      </a>
+    </div>
+    <p class="closing-note reveal">
+      Cheers,<br>
+      <strong>Abdul Mobeen</strong> · Expert Shopify Developer · 6+ Years · Shopify Plus · Liquid · Figma
+    </p>
+  </div>
+</section>
+
+<footer style="background: rgba(5,8,15,0.85); backdrop-filter: blur(16px); border-top: 1px solid rgba(79,142,247,0.12); padding: 24px; text-align: center; font-size: 0.8rem; color: #6B7A99;">
+  © 2025 Abdul Mobeen · Shopify Developer & CRO Specialist · Proposal for Yianni
+</footer>
+
+<script>
+/* ── PARTICLE CANVAS ── */
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], stars = [], mouse = { x: -999, y: -999 };
+
+function resize() {
+  W = canvas.width = canvas.offsetWidth;
+  H = canvas.height = canvas.offsetHeight;
+}
+resize();
+window.addEventListener('resize', () => { resize(); initParticles(); });
+
+canvas.parentElement.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - r.left;
+  mouse.y = e.clientY - r.top;
+});
+
+// Static star field
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 180; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 0.9 + 0.1,
+      alpha: Math.random() * 0.6 + 0.1,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+// Shooting stars
+let shooters = [];
+function spawnShooter() {
+  shooters.push({
+    x: Math.random() * W * 1.2 - W * 0.1,
+    y: Math.random() * H * 0.5,
+    len: Math.random() * 120 + 60,
+    speed: Math.random() * 8 + 6,
+    angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+    alpha: 1,
+    life: 1
+  });
+}
+setInterval(spawnShooter, 2800);
+
+function initParticles() {
+  initStars();
+  particles = [];
+  const count = Math.floor((W * H) / 10000);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      r: Math.random() * 1.8 + 0.5,
+      alpha: Math.random() * 0.55 + 0.1,
+      color: Math.random() > 0.72 ? '#F5C842' : (Math.random() > 0.5 ? '#4F8EF7' : '#7C3AED')
+    });
+  }
+}
+initParticles();
+spawnShooter();
+
+let frame = 0;
+function drawParticles() {
+  frame++;
+  ctx.clearRect(0, 0, W, H);
+
+  // Deep gradient base on canvas
+  const grad = ctx.createRadialGradient(W*0.5, H*0.3, 0, W*0.5, H*0.3, H*0.85);
+  grad.addColorStop(0, 'rgba(30,50,120,0.18)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Twinkle static stars
+  stars.forEach(s => {
+    const twinkle = 0.5 + 0.5 * Math.sin(frame * s.twinkleSpeed + s.twinkleOffset);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.globalAlpha = s.alpha * twinkle;
+    ctx.fill();
+  });
+
+  // Shooting stars
+  shooters = shooters.filter(s => s.life > 0);
+  shooters.forEach(s => {
+    s.x += Math.cos(s.angle) * s.speed;
+    s.y += Math.sin(s.angle) * s.speed;
+    s.life -= 0.018;
+    const tailX = s.x - Math.cos(s.angle) * s.len;
+    const tailY = s.y - Math.sin(s.angle) * s.len;
+    const sg = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
+    sg.addColorStop(0, 'rgba(255,255,255,0)');
+    sg.addColorStop(0.6, `rgba(150,190,255,${s.life * 0.5})`);
+    sg.addColorStop(1, `rgba(255,255,255,${s.life * 0.9})`);
+    ctx.beginPath();
+    ctx.moveTo(tailX, tailY); ctx.lineTo(s.x, s.y);
+    ctx.strokeStyle = sg;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = s.life;
+    ctx.stroke();
+    // Glow at tip
+    const glow = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 8);
+    glow.addColorStop(0, `rgba(200,220,255,${s.life * 0.8})`);
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = glow;
+    ctx.globalAlpha = s.life;
+    ctx.fill();
+  });
+
+  // Floating particles
+  particles.forEach(p => {
+    const dx = p.x - mouse.x, dy = p.y - mouse.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 110) {
+      p.vx += (dx / dist) * 0.14;
+      p.vy += (dy / dist) * 0.14;
+    }
+    p.vx *= 0.994; p.vy *= 0.994;
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+
+    // Glow on larger particles
+    if (p.r > 1.3) {
+      const pg = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
+      pg.addColorStop(0, p.color.replace(')', ',0.15)').replace('rgb', 'rgba').replace('#4F8EF7','rgba(79,142,247,0.15)').replace('#F5C842','rgba(245,200,66,0.1)').replace('#7C3AED','rgba(124,58,237,0.12)'));
+      pg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2);
+      ctx.fillStyle = pg; ctx.globalAlpha = p.alpha * 0.5; ctx.fill();
+    }
+  });
+
+  // Connect nearby particles
+  ctx.globalAlpha = 1;
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const a = particles[i], b = particles[j];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 130) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(79,142,247,${(1 - d / 130) * 0.13})`;
+        ctx.lineWidth = 0.5;
+        ctx.globalAlpha = 1;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ── SCROLL REVEAL ── */
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+revealEls.forEach(el => observer.observe(el));
+
+/* ── COUNTER ANIMATION ── */
+function animateCounter(el, target, prefix = '', suffix = '') {
+  let start = 0;
+  const duration = 1800;
+  const step = timestamp => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const val = Math.floor(ease * target);
+    el.textContent = prefix + val.toLocaleString() + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+const statsEl = document.querySelector('.stats-strip');
+let statsAnimated = false;
+const statsObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !statsAnimated) {
+    statsAnimated = true;
+    document.querySelectorAll('[data-target]').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      animateCounter(el, target, prefix, suffix);
+    });
+  }
+}, { threshold: 0.5 });
+statsObserver.observe(statsEl);
+</script>
+</body>
+</html>
